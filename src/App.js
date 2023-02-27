@@ -4,7 +4,31 @@ import { useReducer } from "react";
 import "./App.scss";
 
 const reducer = (state, action) => {
-  //write your logic here
+  switch (action.type) {
+    case "a": {
+      const student = state.b.find((student) => student.id === action.id);
+      const newStateA = [...state.a, student];
+      const newStateB = state.b.filter((student) => student.id !== action.id);
+
+      return {
+        a: newStateA,
+        b: newStateB,
+      };
+    }
+
+    case "b": {
+      const student = state.a.find((student) => student.id === action.id);
+      const newStateB = [...state.b, student];
+      const newStateA = state.a.filter((student) => student.id !== action.id);
+
+      return {
+        a: newStateA,
+        b: newStateB,
+      };
+     
+    }
+    default:
+  }
 };
 
 const initialState = {
@@ -21,6 +45,9 @@ const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   //Create a handler and attach it to the buttons to trigger the reducer
+  const handleMove = (classRoom, id) => {
+    dispatch({ type: classRoom, id: id });
+  };
 
   return (
     <div className="wrapper">
@@ -29,7 +56,9 @@ const App = () => {
         {state.a.map((student) => (
           <div data-testid={student.name} key={student.id} className="student">
             <span>{student.name}</span>
-            <button>Move to B</button>
+            <button onClick={() => handleMove("b", student.id)}>
+              Move to B
+            </button>
           </div>
         ))}
       </div>
@@ -39,7 +68,9 @@ const App = () => {
         {state.b.map((student) => (
           <div data-testid={student.name} key={student.id} className="student">
             <span>{student.name}</span>
-            <button>Move to A</button>
+            <button onClick={() => handleMove("a", student.id)}>
+              Move to A
+            </button>
           </div>
         ))}
       </div>
